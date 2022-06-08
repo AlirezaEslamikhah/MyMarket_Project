@@ -1,0 +1,135 @@
+﻿@page "/fetchdata"
+@using P9.Shared
+@inject HttpClient Http
+@using p9.client.Mydata
+@inject Microsoft.AspNetCore.Components.NavigationManager navigationManager
+<style >
+    #wrapper {width: 900px;margin:manual}
+    #content{background-color:Yellow}
+    body {
+    background-image: url('https://coolbackgrounds.io/images/backgrounds/index/disco-dba865f1.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    }
+</style>
+<h1>Shop 🎈🎈🎈❤❤ </h1>
+
+<p>Click and take whatever you want even you can add a product if you like 😁😁😀</p>
+
+@if (anbar.forecasts == null)
+{
+    <p><em>Loading...😛</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Pic</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Number Ordered</th>
+                <th>Count</th>
+                <th>Color</th>
+                <th>Add</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in anbar.forecasts)
+            {
+                <tr>
+                    <td><img src = "@forecast.picture"></td>
+                    <td>@forecast.Name</td>
+                    <td>@forecast.Price</td>
+                    <td>@forecast.number</td>
+                    <td>@forecast.count</td>
+                    <td>@forecast.Color</td>
+                    <td><button style="color:black" type="submit" @onclick = "(() =>add1(forecast))" >Add</button></td>
+                    <td><button style="color:black" type="submit" @onclick = "(() =>remove(forecast))" >Remove </button></td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Color</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in cart.kala)
+            {
+                <tr>
+                    <td>@forecast.Name</td>
+                    <td>@forecast.Price</td>
+                    <td>@forecast.Color</td>
+                    
+
+                </tr>
+            }
+        </tbody>
+    </table>
+<button style="color:black" type="submit" @onclick = "update" >Submit And Complete Shop</button>
+    @* <button @onclick="update" class="btn btn-dark btn-lg active" role="button" aria-pressed="true" >continue and complete your shop</button> *@
+<button style="color:black" type="submit" @onclick = "result" >Create New Clothe</button>
+
+@* <button style="color:black" type="submit" @onclick = "()=>navigationManager.NavigateTo("/counter")" >GO to last page </button> *@
+
+@code {
+    public void result ()
+    {
+        navigationManager.NavigateTo("/A");
+    }
+    
+    public void add1(Clothe a )
+    {
+        if (!(cart.kala.Contains(a)))
+        {
+            a.number++;
+            cart.kala.Add(a);
+        }
+        else
+        {
+            a.number++;
+        }
+        @* remove(a); *@
+    }
+
+    public async Task update()
+    {
+        HttpClient client = new HttpClient();
+        @* string path = "http://localhost:5000/api/Clothe/reducecount?id="+ v.Id;  *@
+        foreach (var item in cart.kala)
+        {
+            item.count = item.count - item.number;
+        }
+        await client.PutAsJsonAsync("http://localhost:5000/api/Clothe/reducecount",cart.kala); 
+        StateHasChanged(); 
+        navigationManager.NavigateTo("/counter");
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        HttpClient client = new HttpClient();
+        anbar.forecasts = await Http.GetFromJsonAsync<Clothe[]>("http://localhost:5000/api/Clothe/getallclothe");
+        StateHasChanged();
+    }
+    public void remove(Clothe v)
+    {
+        if (cart.kala.Contains(v))
+        {
+            v.number--;
+            if (v.number == 0)
+            {
+                cart.kala.Remove(v);
+            }
+        }
+        
+    }
+
+}

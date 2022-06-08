@@ -1,0 +1,59 @@
+@page "/counter"
+@using p9.client.Mydata
+
+<style >
+    #wrapper {width: 900px;margin:manual}
+    #content{background-color:Yellow}
+    body {
+    background-image: url('https://coolbackgrounds.io/images/backgrounds/index/disco-dba865f1.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    }
+</style>
+<button style="color:black" type="submit" @onclick = "result" >🏴‍☠️🏴‍☠️REMOVE YOUR OWN ACCOUNT🏴‍☠️🏴‍☠️</button>
+
+<h1>
+    THANKS FOR YOU SHOPPING
+</h1>
+Name: @karbar.user2.FirstName <br/><br/>
+Last Name: @karbar.user2.LastName <br/><br/>
+Your ID: @karbar.user2.ID <br/><br/>
+
+<table class="table">
+        <thead>
+            <tr>
+                <th>Pic</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Number</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in cart.kala)
+            {
+                <tr>
+                    <td><img src = "@forecast.picture"></td>
+                    <td>@forecast.Name</td>
+                    <td>@forecast.Price</td>
+                    <td>@forecast.number</td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+<p>TOTAL PRICE IS : @cart.calc() </p>
+<img src = "https://edit.org/img/blog/x1x-free-printable-thank-you-purchase-template.jpg">
+
+@code {
+    public async Task result()
+    {
+        HttpClient client = new HttpClient();
+        User g = await client.GetFromJsonAsync<User>("http://localhost:5000/api/User/getlastuser");
+        string path = $"http://localhost:5000/api/User/deleteuser?id={g.ID}";
+        await client.DeleteAsync(path);
+        StateHasChanged();
+    }
+}

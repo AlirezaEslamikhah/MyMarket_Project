@@ -1,0 +1,58 @@
+@page "/A"
+@using p9.client.Mydata
+@using Microsoft.AspNetCore.Components
+
+
+    <EditForm Model="@f" OnValidSubmit="ezafee">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <p>
+            <label>
+                Name <br />
+                <InputText @bind-Value="f.Name" />
+            </label>
+        </p>
+        <p>
+            <label>
+                Color <br />
+                <InputText @bind-Value="f.Color" />
+            </label>
+        </p>
+        <p>
+            <label>
+                Picture  <br />
+                <InputText @bind-Value="f.picture" />
+            </label>
+        </p>
+        <p>
+            <label>
+                Count <br />
+                <InputNumber @bind-Value="f.count" />
+            </label>
+        </p>
+        <p>
+            <label>
+                Price <br />
+                <InputNumber @bind-Value="f.Price" />
+            </label>
+        </p>
+        <button class="btn-danger" type="submit">Add</button>
+    </EditForm>
+
+
+
+@code
+{
+    Clothe f = new Clothe();
+    protected  async Task ezafee()
+    {
+        HttpClient b = new HttpClient();
+        await b.PostAsJsonAsync("http://localhost:5000/api/Clothe/addclothe",f);
+        StateHasChanged();
+        
+    }
+    @* public async Task swa()
+    {
+        await ezafee(f);
+    } *@
+}
